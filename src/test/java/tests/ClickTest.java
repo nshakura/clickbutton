@@ -1,37 +1,76 @@
 package tests;
 
+import com.codeborne.selenide.Condition;
 import org.junit.BeforeClass;
-import org.junit.AfterClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.By;
+import static com.codeborne.selenide.Selenide.*;
+import com.codeborne.selenide.Configuration;
+import org.junit.Before;
 
-import java.util.concurrent.TimeUnit;
-import org.junit.Assert;
 
 
 public class ClickTest {
 
-    public static WebDriver driver;
-    public static MainPage mainPage;
-
     @BeforeClass
-    public static void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\shakura_n\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe");
-        driver = new ChromeDriver();
-        //mainPage = new MainPage(driver);
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.get("http://uitestingplayground.com/click");
+    public static void setUp() {
+        closeWebDriver();
+        Configuration.baseUrl = "http://uitestingplayground.com";
+    }
+
+    @Before
+    public void login() {
+        open("/");
     }
 
     @Test
-    public void clickbuttonTest() {
-        mainPage.clickBt();
-        Assert.assertTrue(String.valueOf(true), mainPage.getBt());
+    public void dynamicIdTest() {
+        open("/dynamicid");
+        sleep(2000);
+        $(By.xpath("//*[@class='btn btn-primary']")).click();
     }
 
-    @AfterClass
-    public static void tearDown() {
-        driver.quit(); }
-}
+    @Test
+    public void claccAttributeTest() {
+        open("/classattr");
+        sleep(2000);
+        $(By.xpath("//button[contains(@class,'btn-primary')]")).click();
+        sleep(2000);
+        switchTo().alert().accept();
+        sleep(3000);
+        }
+
+    @Test
+    public void hiddenLayersTest() {
+        open("/hiddenlayers");
+        sleep(2000);
+        $(By.xpath("//button[@id='greenButton']")).click();
+        sleep(2000);
+        $(By.xpath("//button[@id='blueButton']")).isEnabled();
+        sleep(3000);
+    }
+
+    @Test
+    public void ajaxDataTest() throws InterruptedException {
+        open("/ajax");
+        $(By.xpath("//button[@id='ajaxButton']")).click();
+        sleep(15000);
+        $(By.xpath("//p[contains(text(), 'Data loaded with AJAX get request.')]")).shouldBe(Condition.visible);
+
+    }
+
+    @Test
+    public void clickTest() {
+        open("/click");
+        $(By.xpath("//button[@class='btn btn-primary']")).click();
+        sleep(2000);
+        $(By.xpath("//button[@class='btn btn-success']")).shouldBe(Condition.visible);
+        sleep(2000);
+
+    }
+
+
+
+    }
+
+
